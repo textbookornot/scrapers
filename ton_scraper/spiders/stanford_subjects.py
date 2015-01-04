@@ -4,14 +4,14 @@
 
 import scrapy
 from ton_scraper.utils import clean_string
-from ton_scraper.items import Course
+from ton_scraper.items import Subject
 
 #######################################################################
 #                               spider                                #
 #######################################################################
 
-class StanfordCourseSpider(scrapy.Spider):
-    name = "StanfordCourseSpider"
+class StanfordSubjectSpider(scrapy.Spider):
+    name = "StanfordSubjectSpider"
     allowed_domains = ["explorecourses.stanford.edu"]
     start_urls = ["http://explorecourses.stanford.edu"]
 
@@ -58,9 +58,7 @@ class StanfordCourseSpider(scrapy.Spider):
             # scrape the units
             attributes = course.xpath('div[@class="courseAttributes"][1]//text()').extract()[0]
             units = attributes[attributes.rfind('Units:')+6 : ].split('|')[0].strip()
-            units = units.split('-')
-            item['min_units'] = int(units[0])
-            item['max_units'] = int(units[1]) if len(units) > 1 else int(units[0])
+            item['units'] = units
 
             # scrape the list of instructors into a list which is stripped
             instructors = course.xpath('div[@class="courseAttributes"]/a/text()').extract()
