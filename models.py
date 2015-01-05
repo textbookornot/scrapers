@@ -2,7 +2,7 @@
 #                               imports                               #
 #######################################################################
 
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, PrimaryKeyConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.engine.url import URL
@@ -46,12 +46,14 @@ class Courses(DeclarativeBase):
     Course model for db
     """
     __tablename__ = "courses"
+    #__table_args__ = (PrimaryKeyConstraint('school', 'subject', 'number'),)
 
-    id = Column(Integer, primary_key=True)
-    number = Column('number', String, nullable=False)
+    #id = Column(Integer, primary_key=True)
+    school = Column('school', String, primary_key=True, nullable=False)
+    subject = Column('subject', String, primary_key=True, nullable=False)
+    number = Column('number', String, primary_key=True, nullable=False)
     title = Column('title', String, nullable=False)
-    instructors = Column('instructors', ARRAY(String), nullable=True)
-    description = Column('instructors', String, nullable=True)
-    min_units = Column('min_units', Integer, nullable=True)
+    min_units = Column('min_units', Integer, nullable=False)
     max_units = Column('max_units', Integer, nullable=False)
-    subject = Column('subject', String, nullable=False)
+    instructors = Column('instructors', ARRAY(String), nullable=True)
+    description = Column('description', String, nullable=True)

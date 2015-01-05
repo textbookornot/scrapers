@@ -42,32 +42,31 @@ class StanfordCourseSpider(scrapy.Spider):
 
             item = Course()
 
-            # scrape the course number and titles
-            item['number'] = course.xpath('h2/span[@class="courseNumber"]/text()').extract()[0][:-1]
-            item['title'] = course.xpath('h2/span[@class="courseTitle"]/text()').extract()[0]
+            # instructors
+            instructors = course.xpath('div[@class="courseAttributes"][2]//a[@class="instructorLink"]/text()').extract()
+            item['instructors'] = [inst.strip()[:-5] for inst in instructors if inst.strip() != ""] if instructors else None
 
-            # set subject code and subject title
-            item['subject'] = item['number'].split()[0]
-            #item['subject_title'] = self.subject_list[item['subject_code']]
+            # continue only for classes with 5 instructors or less (avoid thesis, grad courses)
+            if item['instructors'] and len(item['instructors']) < 6:
 
-            # scrape the description
-            description = course.xpath('div[@class="courseDescription"]/text()').extract()
-            if description:
-                item['description'] = clean_string("".join(description))
+                # scrape the course subject, number, and title
+                course_code = course.xpath('h2/span[@class="courseNumber"]/text()').extract()[0][:-1].split()
+                item['subject'] = course_code[0]
+                item['number'] = course_code[1]
+                item['title'] = course.xpath('h2/span[@class="courseTitle"]/text()').extract()[0]
 
-            # scrape the units
-            attributes = course.xpath('div[@class="courseAttributes"][1]//text()').extract()[0]
-            units = attributes[attributes.rfind('Units:')+6 : ].split('|')[0].strip()
-            units = units.split('-')
-            item['min_units'] = int(units[0])
-            item['max_units'] = int(units[1]) if len(units) > 1 else int(units[0])
+                # scrape the description
+                description = course.xpath('div[@class="courseDescription"]/descendant-or-self::*/text()').extract()
+                item['description'] = clean_string("".join(description)) if description else None
 
-            # scrape the list of instructors into a list which is stripped
-            instructors = course.xpath('div[@class="courseAttributes"]/a/text()').extract()
-            item['instructors'] = [instructor.strip() for instructor in instructors if instructor.strip() != ""]
+                # scrape the units
+                attributes = course.xpath('div[@class="courseAttributes"][1]//text()').extract()[0]
+                units = attributes[attributes.find('Units:') + 7 : ].split('|')[0].strip().split('-')
+                item['min_units'] = int(units[0])
+                item['max_units'] = int(units[1]) if len(units) > 1 else int(units[0])
 
-            # return only classes with 3 or less instructors
-            if item['instructors'] and len(item['instructors']) < 8:
+                item['school'] = "stanford"
+
                 yield item
 
         # iterate through all of the pages and scrape them

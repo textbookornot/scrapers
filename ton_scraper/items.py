@@ -18,6 +18,7 @@ class Course(scrapy.Item):
     title = scrapy.Field()
     instructors = scrapy.Field()
     description = scrapy.Field()
+    #terms = scrapy.Field()
     min_units = scrapy.Field()
     max_units = scrapy.Field()
     school = scrapy.Field()
