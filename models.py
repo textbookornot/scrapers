@@ -57,3 +57,19 @@ class Courses(DeclarativeBase):
     max_units = Column('max_units', Integer, nullable=False)
     instructors = Column('instructors', ARRAY(String), nullable=True)
     description = Column('description', String, nullable=True)
+
+
+class Books(DeclarativeBase):
+    """
+    Textbook model for db
+    """
+    __tablename__ = "books"
+    isbn13 = Column('isbn13', Integer, primary_key=True, nullable=False)
+    # isbn10 = Column('isbn10', Integer, nullable=False)
+    amazon_id = Column('amazon_id', Integer)
+    # edition = Column('edition', Integer)
+    # img_url = Column('img_url', String)
+
+
+
+

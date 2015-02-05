@@ -25,9 +25,7 @@ class StanfordCourseSpider(scrapy.Spider):
         base_url = 'http://explorecourses.stanford.edu/search?filter-term-Summer=on&filter-coursestatus-Active=on&filter-term-Spring=on&filter-term-Winter=on&filter-term-Autumn=on&page=0&q={subject}&view=catalog&filter-departmentcode-{subject}=on&filter-catalognumber-{subject}=on&academicYear=&collapse='
 
         # parse main page and create dictionary of subject codes mapped to subject names
-        for subject in response.xpath(
-                '//div[@class="departmentsContainer"]//a/text()'
-        ).extract():
+        for subject in response.xpath('//div[@class="departmentsContainer"]//a/text()').extract():
             self.subject_list[subject[subject.rfind('(')+1 : subject.rfind(')')]] = subject.split(' (')[0].strip()
 
         # use subject codes to scrape all subject urls
